@@ -152,6 +152,7 @@ std::vector<Triangle2> get_bowyer_watson(const std::vector<Vec2> &point_list) {
         }
         for (Edge &edge : polygon) { // re-triangulate the polygonal hole
             triangulation.emplace_back((Triangle2){edge.m_p1, edge.m_p2, point}); // form a triangle from edge to point and add it to triangulation
+        }
     }
     for (Triangle2 &triangle : triangulation) { // done inserting points, now clean up
         if (get_shared_points(triangle, super).size() > 0) {
