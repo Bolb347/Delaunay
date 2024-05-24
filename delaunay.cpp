@@ -1,3 +1,4 @@
+#include "delaunay.h"
 #include "types.h"
 #include <cmath>
 #include <array>
