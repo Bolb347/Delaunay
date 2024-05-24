@@ -79,42 +79,83 @@ bool operator==(const Edge &a, const Edge &b) {
 }
 
 void remove_from_vec(std::vector<Vec2> *vector, const Vec2 &val) {
-    vector->erase(std::remove(vector->begin(), vector->end(), val), vector->end());
+    std::vector<Vec2>::iterator itr = vector->begin();
+    while (itr != vector->end()) {
+        if (*itr == val) {
+            vector->erase(itr);
+        } else {
+            itr ++;
+        }
+    }
 }
 void remove_from_vec(std::vector<Edge> *vector, const Edge &val) {
-    vector->erase(std::remove(vector->begin(), vector->end(), val), vector->end());
+    std::vector<Edge>::iterator itr = vector->begin();
+    while (itr != vector->end()) {
+        if (*itr == val) {
+            vector->erase(itr);
+        } else {
+            itr ++;
+        }
+    }
 }
 void remove_from_vec(std::vector<Triangle2> *vector, const Triangle2 &val) {
-    vector->erase(std::remove(vector->begin(), vector->end(), val), vector->end());
+    std::vector<Edge>::iterator itr = vector->begin();
+    while (itr != vector->end()) {
+        if (*itr == val) {
+            vector->erase(itr);
+        } else {
+            itr ++;
+        }
+    }
 }
 
-std::vector<Triangle2> get_bowyer_watson(const std::vector<Vec2> &pointList) {
+std::vector<Edge> get_unshared_edges(std::vector<Triangle2> triangles) {
+    std::vector<Edge> unshared;
+    for (Triangle2 &triangle : triangles) {
+        for (Edge &edge : get_edges(triangle)) {
+            unshared.emplace_back();
+        }
+    }
+    for (Triangle2 &triangle : triangles) {
+        for (Triangle2 &other : triangles) {
+            if (triangle != other) {
+                for (Edge &edge_t : get_edges(triangle)) {
+                    for (Edge &edge_o : get_edges(other)) {
+                        if (edge_t == edge_o) {
+                            remove_from_vec(&unshared, edge_t);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return unshared;
+}
+
+std::vector<Triangle2> get_bowyer_watson(const std::vector<Vec2> &point_list) {
     std::vector<Triangle2> triangulation;
     Triangle2 super = {(Vec2){-INF, -INF}, (Vec2){INF, -INF}, (Vec2){0, INF}};
     triangulation.emplace_back(super); // must be large enough to completely contain all the points in pointList
-    for (Vec2 &point : pointList) { // add all the points one at a time to the triangulation
-        std::vector<Triangle2> badTriangles;
+    for (Vec2 &point : point_list) { // add all the points one at a time to the triangulation
+        std::vector<Triangle2> bad_triangles;
         for (Triangle2 &triangle : triangulation) { // first find all the triangles that are no longer valid due to the insertion
             if (in_circumcircle(triangle, point)) {
-                badTriangles.emplace_back(triangle);
+                bad_triangles.emplace_back(triangle);
         }
         std::vector<Edge> polygon;
-        for (Triangle2 &triangle : badTriangles) { // find the boundary of the polygonal hole
-            for (Edge &edge : get_edges(triangle)) {
-                if () {///edge is not shared by any other triangles in badTriangles
-                    polygon.emplace_back(edge);
-            }
+        for (Edge &edge : get_unshared_edges(bad_triangles)) { // find the boundary of the polygonal hole
+            polygon.emplace_back(edge);
         }
-        for (Triangle2 &triangle : badTriangles) { // remove them from the data structure
+        for (Triangle2 &triangle : bad_triangles) { // remove them from the data structure
             remove_from_vec(&triangulation, triangle);
         }
         for (Edge &edge : polygon) { // re-triangulate the polygonal hole
-            triangulation.emplace_back((Triangle2){edge.m_p1, edge.m_p2, point}) // form a triangle from edge to point and add it to triangulation
+            triangulation.emplace_back((Triangle2){edge.m_p1, edge.m_p2, point}); // form a triangle from edge to point and add it to triangulation
     }
     for (Triangle2 &triangle : triangulation) { // done inserting points, now clean up
         if (get_shared_points(triangle, super).size() > 0) {
             remove_from_vec(&triangulation, triangle);
         }
     }
-    return triangulation
+    return triangulation;
 }
