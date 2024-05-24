@@ -3,6 +3,7 @@
 #include <cmath>
 #include <array>
 #include <vector>
+#include <algorithm>
 #include <limits>
 
 #define SQR(x) std::pow(x, 2)
@@ -80,34 +81,13 @@ bool operator==(const Edge &a, const Edge &b) {
 }
 
 void remove_from_vec(std::vector<Vec2> *vector, const Vec2 &val) {
-    std::vector<Vec2>::iterator itr = vector->begin();
-    while (itr != vector->end()) {
-        if (*itr == val) {
-            vector->erase(itr);
-        } else {
-            itr ++;
-        }
-    }
+    vector->erase(std::remove(vector->begin(), vector->end(), val), vector->end());
 }
 void remove_from_vec(std::vector<Edge> *vector, const Edge &val) {
-    std::vector<Edge>::iterator itr = vector->begin();
-    while (itr != vector->end()) {
-        if (*itr == val) {
-            vector->erase(itr);
-        } else {
-            itr ++;
-        }
-    }
+    vector->erase(std::remove(vector->begin(), vector->end(), val), vector->end());
 }
 void remove_from_vec(std::vector<Triangle2> *vector, const Triangle2 &val) {
-    std::vector<Edge>::iterator itr = vector->begin();
-    while (itr != vector->end()) {
-        if (*itr == val) {
-            vector->erase(itr);
-        } else {
-            itr ++;
-        }
-    }
+    vector->erase(std::remove(vector->begin(), vector->end(), val), vector->end());
 }
 
 std::vector<Edge> get_unshared_edges(std::vector<Triangle2> triangles) {
@@ -119,7 +99,7 @@ std::vector<Edge> get_unshared_edges(std::vector<Triangle2> triangles) {
     }
     for (Triangle2 &triangle : triangles) {
         for (Triangle2 &other : triangles) {
-            if (triangle != other) {
+            if (!(triangle == other)) {
                 for (Edge &edge_t : get_edges(triangle)) {
                     for (Edge &edge_o : get_edges(other)) {
                         if (edge_t == edge_o) {
@@ -133,7 +113,7 @@ std::vector<Edge> get_unshared_edges(std::vector<Triangle2> triangles) {
     return unshared;
 }
 
-std::vector<Triangle2> get_bowyer_watson(const std::vector<Vec2> &point_list) {
+std::vector<Triangle2> get_bowyer_watson(std::vector<Vec2> point_list) {
     std::vector<Triangle2> triangulation;
     Triangle2 super = {(Vec2){-INF, -INF}, (Vec2){INF, -INF}, (Vec2){0, INF}};
     triangulation.emplace_back(super); // must be large enough to completely contain all the points in pointList
@@ -142,6 +122,7 @@ std::vector<Triangle2> get_bowyer_watson(const std::vector<Vec2> &point_list) {
         for (Triangle2 &triangle : triangulation) { // first find all the triangles that are no longer valid due to the insertion
             if (in_circumcircle(triangle, point)) {
                 bad_triangles.emplace_back(triangle);
+            }
         }
         std::vector<Edge> polygon;
         for (Edge &edge : get_unshared_edges(bad_triangles)) { // find the boundary of the polygonal hole
