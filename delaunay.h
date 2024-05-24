@@ -27,6 +27,6 @@ void remove_from_vec(std::vector<Triangle2> *vector, const Triangle2 &val);
 
 std::vector<Edge> get_unshared_edges(std::vector<Triangle2> triangles);
 
-std::vector<Triangle2> get_bowyer_watson(const std::vector<Vec2> &point_list);
+std::vector<Triangle2> get_bowyer_watson(std::vector<Vec2> point_list);
 
 #endif
