@@ -15,7 +15,7 @@ float distance(const Vec2 &a, const Vec2 &b) {
     return SQRT(SQR(b.x - a.x) + SQR(b.y - a.y));
 }
 
-Vec2 get_circumcenter(const Triangle2 &triangle) {
+Vec2 get_circumcenter(Triangle2 triangle) {
     Vec2 A = triangle.m_p1;
     Vec2 B = triangle.m_p2;
     Vec2 C = triangle.m_p3;
@@ -25,7 +25,7 @@ Vec2 get_circumcenter(const Triangle2 &triangle) {
     return {x, y};
 }
 
-bool in_circumcircle(const Triangle2 &triangle, const Vec2 &point) {
+bool in_circumcircle(Triangle2 triangle, Vec2 point) {
     Vec2 center = get_circumcenter(triangle);
     if (distance(center, point) > distance(center, triangle.m_p1)) {
         return false;
@@ -34,15 +34,15 @@ bool in_circumcircle(const Triangle2 &triangle, const Vec2 &point) {
     }
 }
 
-std::array<Vec2, 3> get_points(const Triangle2 &triangle) {
+std::array<Vec2, 3> get_points(Triangle2 triangle) {
     return {triangle.m_p1, triangle.m_p2, triangle.m_p3};
 }
 
-std::array<Edge, 3> get_edges(const Triangle2 &triangle) {
+std::array<Edge, 3> get_edges(Triangle2 triangle) {
     return {(Edge){triangle.m_p1, triangle.m_p2}, (Edge){triangle.m_p2, triangle.m_p3}, (Edge){triangle.m_p3, triangle.m_p1}};
 }
 
-std::vector<Vec2> get_shared_points(const Triangle2 &a, const Triangle2 &b) {
+std::vector<Vec2> get_shared_points(Triangle2 a, Triangle2 b) {
     std::vector<Vec2> shared;
     for (Vec2 &point_a : get_points(a)) {
         for (Vec2 &point_b : get_points(b)) {
@@ -80,13 +80,13 @@ bool operator==(const Edge &a, const Edge &b) {
     }
 }
 
-void remove_from_vec(std::vector<Vec2> *vector, const Vec2 &val) {
+void remove_from_vec(std::vector<Vec2> *vector, Vec2 val) {
     vector->erase(std::remove(vector->begin(), vector->end(), val), vector->end());
 }
-void remove_from_vec(std::vector<Edge> *vector, const Edge &val) {
+void remove_from_vec(std::vector<Edge> *vector, Edge val) {
     vector->erase(std::remove(vector->begin(), vector->end(), val), vector->end());
 }
-void remove_from_vec(std::vector<Triangle2> *vector, const Triangle2 &val) {
+void remove_from_vec(std::vector<Triangle2> *vector, Triangle2 val) {
     vector->erase(std::remove(vector->begin(), vector->end(), val), vector->end());
 }
 
