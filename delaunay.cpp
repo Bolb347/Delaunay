@@ -90,27 +90,16 @@ void remove_from_vec(std::vector<Triangle2> *vector, Triangle2 val) {
     vector->erase(std::remove(vector->begin(), vector->end(), val), vector->end());
 }
 
-std::vector<Edge> get_unshared_edges(std::vector<Triangle2> triangles) {
-    std::vector<Edge> unshared;
+bool get_if_unshared(std::vector<Triangle2> triangles, Triangle2 source, Edge test) {
+    remove_from_vec(&triangles, source);
     for (Triangle2 &triangle : triangles) {
-        for (Edge &edge : get_edges(triangle)) {
-            unshared.emplace_back();
-        }
-    }
-    for (Triangle2 &triangle : triangles) {
-        for (Triangle2 &other : triangles) {
-            if (!(triangle == other)) {
-                for (Edge &edge_t : get_edges(triangle)) {
-                    for (Edge &edge_o : get_edges(other)) {
-                        if (edge_t == edge_o) {
-                            remove_from_vec(&unshared, edge_t);
-                        }
-                    }
-                }
+        for (Edge edge : get_edges(triangle)) {
+            if (edge == test) {
+                return false;
             }
         }
     }
-    return unshared;
+    return true;
 }
 
 std::vector<Triangle2> get_bowyer_watson(std::vector<Vec2> point_list) {
@@ -125,8 +114,12 @@ std::vector<Triangle2> get_bowyer_watson(std::vector<Vec2> point_list) {
             }
         }
         std::vector<Edge> polygon;
-        for (Edge &edge : get_unshared_edges(bad_triangles)) { // find the boundary of the polygonal hole
-            polygon.emplace_back(edge);
+        for (Triangle2 &triangle : bad_triangles) {
+            for (Edge &edge : get_edges(triangle)) {
+                if (!(get_if_unshared(bad_triangles, triangle, edge))) {
+                    polygon.emplace_back(edge)
+                }
+            }
         }
         for (Triangle2 &triangle : bad_triangles) { // remove them from the data structure
             remove_from_vec(&triangulation, triangle);
