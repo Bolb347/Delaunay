@@ -11,6 +11,32 @@
 #define SQRT(x) std::sqrt(x)
 #define INF std::numeric_limits<float>::max()
 
+bool operator==(const Vec2 &a, const Vec2 &b) {
+    if ((a.x == b.x) && (a.y == b.y)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+bool operator==(const Triangle2 &a, const Triangle2 &b) {
+    if ((a.m_p1 == b.m_p1) && (a.m_p2 == b.m_p2) && (a.m_p3 == b.m_p3)) {
+        return true;
+    } else if ((a.m_p1 == b.m_p2) && (a.m_p2 == b.m_p3) && (a.m_p3 == b.m_p1)) {
+        return true;
+    } else if ((a.m_p1 == b.m_p3) && (a.m_p2 == b.m_p1) && (a.m_p3 == b.m_p2)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+bool operator==(const Edge &a, const Edge &b) {
+    if (((a.m_p1 == b.m_p1) && (a.m_p2 == b.m_p2)) || ((a.m_p1 == b.m_p2) && (a.m_p2 == b.m_p1))) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 float distance(Vec2 a, Vec2 b) {
     return SQRT(SQR(b.x - a.x) + SQR(b.y - a.y));
 }
@@ -52,32 +78,6 @@ std::vector<Vec2> get_shared_points(Triangle2 a, Triangle2 b) {
         }
     }
     return shared;
-}
-
-bool operator==(const Vec2 &a, const Vec2 &b) {
-    if ((a.x == b.x) && (a.y == b.y)) {
-        return true;
-    } else {
-        return false;
-    }
-}
-bool operator==(const Triangle2 &a, const Triangle2 &b) {
-    if ((a.m_p1 == b.m_p1) && (a.m_p2 == b.m_p2) && (a.m_p3 == b.m_p3)) {
-        return true;
-    } else if ((a.m_p1 == b.m_p2) && (a.m_p2 == b.m_p3) && (a.m_p3 == b.m_p1)) {
-        return true;
-    } else if ((a.m_p1 == b.m_p3) && (a.m_p2 == b.m_p1) && (a.m_p3 == b.m_p2)) {
-        return true;
-    } else {
-        return false;
-    }
-}
-bool operator==(const Edge &a, const Edge &b) {
-    if (((a.m_p1 == b.m_p1) && (a.m_p2 == b.m_p2)) || ((a.m_p1 == b.m_p2) && (a.m_p2 == b.m_p1))) {
-        return true;
-    } else {
-        return false;
-    }
 }
 
 void remove_from_vec(std::vector<Vec2> *vector, Vec2 val) {
