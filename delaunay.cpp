@@ -90,9 +90,10 @@ void remove_from_vec(std::vector<Triangle2> *vector, Triangle2 val) {
     vector->erase(std::remove(vector->begin(), vector->end(), val), vector->end());
 }
 
-bool get_if_unshared(std::vector<Triangle2> triangles, Triangle2 source, Edge test) {
-    remove_from_vec(&triangles, source);
-    for (Triangle2 &triangle : triangles) {
+bool get_if_shared(std::vector<Triangle2> triangles, Triangle2 source, Edge test) {
+    std::vector<Triangle2> cpy = triangles;
+    remove_from_vec(&cpy, source);
+    for (Triangle2 &triangle : cpy) {
         for (Edge edge : get_edges(triangle)) {
             if (edge == test) {
                 return false;
@@ -116,7 +117,7 @@ std::vector<Triangle2> get_bowyer_watson(std::vector<Vec2> point_list) {
         std::vector<Edge> polygon;
         for (Triangle2 &triangle : bad_triangles) {
             for (Edge &edge : get_edges(triangle)) {
-                if (get_if_unshared(bad_triangles, triangle, edge)) {
+                if (!get_if_shared(bad_triangles, triangle, edge)) {
                     polygon.emplace_back(edge);
                 }
             }
