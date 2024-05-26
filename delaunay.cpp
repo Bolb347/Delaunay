@@ -11,7 +11,7 @@
 #define SQRT(x) std::sqrt(x)
 #define INF std::numeric_limits<float>::max()
 
-float distance(const Vec2 &a, const Vec2 &b) {
+float distance(Vec2 a, Vec2 b) {
     return SQRT(SQR(b.x - a.x) + SQR(b.y - a.y));
 }
 
@@ -117,7 +117,7 @@ std::vector<Triangle2> get_bowyer_watson(std::vector<Vec2> point_list) {
         for (Triangle2 &triangle : bad_triangles) {
             for (Edge &edge : get_edges(triangle)) {
                 if (!(get_if_unshared(bad_triangles, triangle, edge))) {
-                    polygon.emplace_back(edge)
+                    polygon.emplace_back(edge);
                 }
             }
         }
