@@ -81,13 +81,31 @@ std::vector<Vec2> get_shared_points(Triangle2 a, Triangle2 b) {
 }
 
 void remove_from_vec(std::vector<Vec2> *vector, Vec2 val) {
-    vector->erase(std::remove(vector->begin(), vector->end(), val), vector->end());
+    for (int i = 0; i < vector->size();) {
+        if (vector[i] == val) {
+            vector->erase(i);
+        } else {
+            i ++;
+        }
+    }
 }
 void remove_from_vec(std::vector<Edge> *vector, Edge val) {
-    vector->erase(std::remove(vector->begin(), vector->end(), val), vector->end());
+    for (int i = 0; i < vector->size();) {
+        if (vector[i] == val) {
+            vector->erase(i);
+        } else {
+            i ++;
+        }
+    }
 }
 void remove_from_vec(std::vector<Triangle2> *vector, Triangle2 val) {
-    vector->erase(std::remove(vector->begin(), vector->end(), val), vector->end());
+    for (int i = 0; i < vector->size();) {
+        if (vector[i] == val) {
+            vector->erase(i);
+        } else {
+            i ++;
+        }
+    }
 }
 
 bool get_if_shared(std::vector<Triangle2> triangles, Triangle2 source, Edge test) {
