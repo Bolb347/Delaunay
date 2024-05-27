@@ -82,8 +82,8 @@ std::vector<Vec2> get_shared_points(Triangle2 a, Triangle2 b) {
 
 void remove_from_vec(std::vector<Vec2> *vector, Vec2 val) {
     for (int i = 0; i < vector->size();) {
-        if (vector[i] == val) {
-            vector->erase(i);
+        if ((*vector)[i] == val) {
+            vector->erase(vector->begin() + i);
         } else {
             i ++;
         }
@@ -91,8 +91,8 @@ void remove_from_vec(std::vector<Vec2> *vector, Vec2 val) {
 }
 void remove_from_vec(std::vector<Edge> *vector, Edge val) {
     for (int i = 0; i < vector->size();) {
-        if (vector[i] == val) {
-            vector->erase(i);
+        if ((*vector)[i] == val) {
+            vector->erase(vector->begin() + i);
         } else {
             i ++;
         }
@@ -100,8 +100,8 @@ void remove_from_vec(std::vector<Edge> *vector, Edge val) {
 }
 void remove_from_vec(std::vector<Triangle2> *vector, Triangle2 val) {
     for (int i = 0; i < vector->size();) {
-        if (vector[i] == val) {
-            vector->erase(i);
+        if ((*vector)[i] == val) {
+            vector->erase(vector->begin() + i);
         } else {
             i ++;
         }
