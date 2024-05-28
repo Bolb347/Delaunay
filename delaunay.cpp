@@ -9,7 +9,7 @@
 #define SQR(x) std::pow(x, 2)
 #define ABS(x) std::abs(x)
 #define SQRT(x) std::sqrt(x)
-#define INF std::numeric_limits<float>::max()
+#define SCALE 10
 
 bool operator==(const Vec2 &a, const Vec2 &b) {
     if ((a.x == b.x) && (a.y == b.y)) {
@@ -124,11 +124,39 @@ std::vector<Edge> get_unique_edges(std::vector<Edge> edges) {
     return unique;
 }
 
+Vec2 get_mins(std::vector<Vec2> vector) {
+    Vec2 min = {0, 0};
+    for (Vec2 item : vector) {
+        if (item.x < min.x) {
+            min.x = item.x;
+        }
+        if (item.y < min.y) {
+            min.y = item.y;
+        }
+    }
+    return min;
+}
+
+Vec2 get_maxes(std::vector<Vec2> vector) {
+    Vec2 max = {0, 0};
+    for (Vec2 item : vector) {
+        if (item.x > max.x) {
+            max.x = item.x;
+        }
+        if (item.y > max.y) {
+            max.y = item.y;
+        }
+    }
+    return max;
+}
+
 std::vector<Triangle2> get_bowyer_watson(std::vector<Vec2> point_list) {
     std::vector<Triangle2> triangulation;
-    Triangle2 super = {(Vec2){-INF, -INF}, (Vec2){INF, -INF}, (Vec2){0, INF}};
+    Vec2 min = get_mins(point_list);
+    Vec2 max = get_maxes(point_list);
+    Triangle2 super = {(Vec2){min.x * SCALE, min.y * SCALE}, (Vec2){max.x * SCALE, min.y * SCALE}, (Vec2){(min.x + max.x)/2 * SCALE, max.y * SCALE}}; //generates an isosceles triangle encomapasing all of the points
     triangulation.emplace_back(super); // must be large enough to completely contain all the points in pointList
-    for (Vec2 point : point_list) { // add all the points one at a time to the triangulation
+    for (Vec2 &point : point_list) { // add all the points one at a time to the triangulation
         std::vector<Triangle2> bad_triangles;
         for (Triangle2 triangle : triangulation) { // first find all the triangles that are no longer valid due to the insertion
             if (in_circumcircle(triangle, point)) {
@@ -149,10 +177,11 @@ std::vector<Triangle2> get_bowyer_watson(std::vector<Vec2> point_list) {
             triangulation.emplace_back((Triangle2){edge.m_p1, edge.m_p2, point}); // form a triangle from edge to point and add it to triangulation
         }
     }
+    std::vector<Triangle2> cpy = triangulation;
     for (Triangle2 triangle : triangulation) { // done inserting points, now clean up
         if (shared_points(triangle, super)) {
-            remove_from_vec(&triangulation, triangle); //removes any triangles sharing points with the super triangle, to remove any unoriginal points
+            remove_from_vec(&cpy, triangle); //removes any triangles sharing points with the super triangle, to remove any unoriginal points
         }
     }
-    return triangulation;
+    return cpy;
 }
