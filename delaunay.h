@@ -19,7 +19,7 @@ std::array<Vec2, 3> get_points(Triangle2 triangle);
 
 std::array<Edge, 3> get_edges(Triangle2 triangle);
 
-std::vector<Vec2> get_shared_points(Triangle2 a, Triangle2 b);
+bool shared_points(Triangle2 a, Triangle2 b);
 
 void remove_from_vec(std::vector<Vec2> *vector, Vec2 val);
 void remove_from_vec(std::vector<Edge> *vector, Edge val);
