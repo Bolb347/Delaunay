@@ -108,17 +108,21 @@ void remove_from_vec(std::vector<Triangle2> *vector, Triangle2 val) {
     }
 }
 
-bool get_if_shared(std::vector<Triangle2> triangles, Triangle2 source, Edge test) {
-    std::vector<Triangle2> cpy = triangles;
-    remove_from_vec(&cpy, source);
-    for (Triangle2 &triangle : cpy) {
-        for (Edge edge : get_edges(triangle)) {
-            if (edge == test) {
-                return false;
+std::vector<Edge> get_unique_edges(std::vector<Edge> edges) {
+    std::vector<Edge> unique;
+    for (int i = 0; i < edges.size(); i ++) {
+        bool is_unique = true;
+        for (int j = 0; j < edges.size(); j ++) {
+            if ((i != j) && edges[i] == edges[j]) {
+                is_unique = false;
+                break;
             }
         }
+        if (is_unique == true) {
+            unique.emplace_back(edges[i]);
+        }
     }
-    return true;
+    return unique;
 }
 
 std::vector<Triangle2> get_bowyer_watson(std::vector<Vec2> point_list) {
@@ -129,27 +133,26 @@ std::vector<Triangle2> get_bowyer_watson(std::vector<Vec2> point_list) {
         std::vector<Triangle2> bad_triangles;
         for (Triangle2 &triangle : triangulation) { // first find all the triangles that are no longer valid due to the insertion
             if (in_circumcircle(triangle, point)) {
-                bad_triangles.emplace_back(triangle);
+                bad_triangles.emplace_back(triangle); //if a point is inside of the circumcircle of a triangle, then that triangle is Delaunay invalid
             }
         }
         std::vector<Edge> polygon;
         for (Triangle2 &triangle : bad_triangles) {
             for (Edge &edge : get_edges(triangle)) {
-                if (!get_if_shared(bad_triangles, triangle, edge)) {
-                    polygon.emplace_back(edge);
-                }
+                polygon.emplace_back(edge); //adds every edge in the invalid triangles to the polygonal hole
             }
         }
+        polygon = get_unique_edges(polygon); //removes any duplicate, hence shared edges from the polygon, leaving just the outside of the polygon
         for (Triangle2 &triangle : bad_triangles) { // remove them from the data structure
             remove_from_vec(&triangulation, triangle);
         }
-        for (Edge &edge : polygon) { // re-triangulate the polygonal hole
+        for (Edge &edge : polygon) { //generates a triangle from each polygonal edge and the point, creating Delaunay valid triangles
             triangulation.emplace_back((Triangle2){edge.m_p1, edge.m_p2, point}); // form a triangle from edge to point and add it to triangulation
         }
     }
     for (Triangle2 &triangle : triangulation) { // done inserting points, now clean up
         if (get_shared_points(triangle, super).size() > 0) {
-            remove_from_vec(&triangulation, triangle);
+            remove_from_vec(&triangulation, triangle); //removes any triangles sharing points with the super triangle, to remove any unoriginal points
         }
     }
     return triangulation;
