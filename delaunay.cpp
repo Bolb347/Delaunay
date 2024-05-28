@@ -124,27 +124,16 @@ std::vector<Edge> get_unique_edges(std::vector<Edge> edges) {
     return unique;
 }
 
-Vec2 get_mins(std::vector<Vec2> vector) {
-    Vec2 min = {0, 0};
-    for (Vec2 item : vector) {
-        if (item.x < min.x) {
-            min.x = item.x;
-        }
-        if (item.y < min.y) {
-            min.y = item.y;
-        }
-    }
-    return min;
-}
-
 Vec2 get_maxes(std::vector<Vec2> vector) {
     Vec2 max = {0, 0};
     for (Vec2 item : vector) {
-        if (item.x > max.x) {
-            max.x = item.x;
+        float absx = std::abs(item.x);
+        float absy = std::abs(item.y);
+        if (absx > max.x) {
+            max.x = absx;
         }
-        if (item.y > max.y) {
-            max.y = item.y;
+        if (absy > max.y) {
+            max.y = absy;
         }
     }
     return max;
@@ -152,9 +141,9 @@ Vec2 get_maxes(std::vector<Vec2> vector) {
 
 std::vector<Triangle2> get_bowyer_watson(std::vector<Vec2> point_list) {
     std::vector<Triangle2> triangulation;
-    Vec2 min = get_mins(point_list);
     Vec2 max = get_maxes(point_list);
-    Triangle2 super = {(Vec2){min.x * SCALE, min.y * SCALE}, (Vec2){max.x * SCALE, min.y * SCALE}, (Vec2){(min.x + max.x)/2 * SCALE, max.y * SCALE}}; //generates an isosceles triangle encomapasing all of the points
+    Triangle2 super = {(Vec2){-max.x * SCALE, -max.y * SCALE}, (Vec2){max.x * SCALE, -max.y * SCALE}, (Vec2){0, max.y * SCALE}}; //generates an isosceles triangle encomapasing all of the points
+    std::printf("(%f,%f), (%f,%f), (%f,%f)", super.m_p1.x, super.m_p1.y, super.m_p2.x, super.m_p2.y, super.m_p3.x, super.m_p3.y);
     triangulation.emplace_back(super); // must be large enough to completely contain all the points in pointList
     for (Vec2 &point : point_list) { // add all the points one at a time to the triangulation
         std::vector<Triangle2> bad_triangles;
