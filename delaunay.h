@@ -25,7 +25,7 @@ void remove_from_vec(std::vector<Vec2> *vector, Vec2 val);
 void remove_from_vec(std::vector<Edge> *vector, Edge val);
 void remove_from_vec(std::vector<Triangle2> *vector, Triangle2 val);
 
-bool get_if_shared(std::vector<Triangle2> triangles, Triangle2 source, Edge test);
+std::vector<Edge> get_unique_edges(std::vector<Edge> edges);
 
 std::vector<Triangle2> get_bowyer_watson(std::vector<Vec2> point_list);
 
