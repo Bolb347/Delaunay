@@ -27,8 +27,6 @@ void remove_from_vec(std::vector<Triangle2> *vector, Triangle2 val);
 
 std::vector<Edge> get_unique_edges(std::vector<Edge> edges);
 
-Vec2 get_mins(std::vector<Vec2> vector);
-
 Vec2 get_maxes(std::vector<Vec2> vector);
 
 std::vector<Triangle2> get_bowyer_watson(std::vector<Vec2> point_list);
